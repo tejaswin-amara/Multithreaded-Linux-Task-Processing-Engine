@@ -84,7 +84,7 @@ void cli_run(cli_ctx_t *ctx) {
     loom_log("[INFO]", "type 'help' for commands");
 
     char line[256];
-    while (fgets(line, sizeof(line), stdin)) {
+    while (1) { if (fgets(line, sizeof(line), stdin) == NULL) break;
         char cmd[32] = {0};
         sscanf(line, "%31s", cmd);
         if (cmd[0] == '\0') continue;

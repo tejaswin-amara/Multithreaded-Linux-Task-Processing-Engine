@@ -51,3 +51,8 @@ obj:
 
 clean:
 	rm -rf bin obj loom.log
+
+dist: all
+	strip $(BIN)
+	tar -czvf task_engine-v1.0.0-linux-amd64.tar.gz $(BIN) web/dashboard.html README.md task_engine.service
+	sha256sum task_engine-v1.0.0-linux-amd64.tar.gz > task_engine-v1.0.0-linux-amd64.tar.gz.sha256
