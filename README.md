@@ -35,24 +35,26 @@ real time.
 
 ## Requirements
 
-- Linux (uses POSIX sockets, `pthread`, `sigwait`)
+- Ubuntu Linux (22.04 LTS or 24.04 LTS)
+
+- Ubuntu Linux (uses POSIX sockets, `pthread`, `sigwait`, `CLOCK_MONOTONIC`)
 - `gcc` with C11 support
 - GNU Make
 
 ## Build
 
 ```bash
-make            # normal optimized build -> ./loom
+make            # normal optimized build -> bin/task_engine
 make tsan       # ThreadSanitizer build, for race-checking (see docs/03)
-make clean      # remove build/, the binary, and loom.log
+make clean      # remove bin/, obj/, and loom.log
 ```
 
 ## Run
 
 ```bash
-./loom                              # defaults: 4 workers, port 8080
-./loom --workers 8 --port 9000      # override at startup
-./loom --help                       # full flag reference
+bin/task_engine                              # defaults: 4 workers, port 8080
+bin/task_engine --workers 8 --port 9000      # override at startup
+bin/task_engine --help                       # full flag reference
 ```
 
 | Flag | Default | Meaning |

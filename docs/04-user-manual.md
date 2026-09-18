@@ -1,10 +1,18 @@
 # User Manual
 
-## 1. Quick start
+## 1. Installation Prerequisites
+
+On Ubuntu 22.04 LTS or 24.04 LTS, ensure you have the required build tools:
+```bash
+sudo apt update
+sudo apt install build-essential valgrind curl
+```
+
+## 2. Quick start
 
 ```bash
 make
-./loom
+bin/task_engine
 ```
 
 Then, in the same terminal, try:
@@ -16,9 +24,9 @@ status
 
 ...and open **http://localhost:8080/** in a browser to watch it happen live.
 
-## 2. The CLI
+## 3. The CLI
 
-Every command is typed at the `loom ready --` prompt and takes effect
+Every command is typed at the `task_engine ready --` prompt and takes effect
 immediately; nothing needs a restart.
 
 | Command | What it does | Example |
@@ -36,7 +44,7 @@ immediately; nothing needs a restart.
 `Ctrl-C` does the same clean shutdown as `quit` -- it does not abandon
 in-flight work.
 
-## 3. The web dashboard
+## 4. The web dashboard
 
 Open the port `loom` printed at startup (default `http://localhost:8080/`).
 Everything on the page refreshes once a second automatically.
@@ -60,7 +68,7 @@ The connection dot next to the title turns from "connecting" to "live" once
 the first poll succeeds, and to "reconnecting" if the server becomes
 unreachable (for example, while it's mid-restart).
 
-## 4. The API
+## 5. The API
 
 All four endpoints are plain HTTP/1.1, no authentication, JSON in and out.
 
@@ -110,7 +118,7 @@ curl -X POST http://localhost:8080/api/submit \
 `400` with `{"error": "..."}`. Successful submission returns
 `200 {"id": N, "queued": true}`.
 
-## 5. Troubleshooting
+## 6. Troubleshooting
 
 | Symptom | Likely cause | Fix |
 |---|---|---|

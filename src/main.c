@@ -35,22 +35,21 @@ static void graceful_shutdown(void) {
     g_shutdown_done = 1;
     pthread_mutex_unlock(&g_shutdown_once_lock);
 
-    printf("\nstopping web server...\n");
+    loom_log("[INFO]", "stopping web server...");
     http_server_stop(&g_http);
 
-    printf("draining task queue and stopping workers (pending tasks will finish first)...\n");
+    loom_log("[INFO]", "draining task queue and stopping workers (pending tasks will finish first)...");
     pool_shutdown_and_wait(&g_pool);
 
     stats_snapshot_t snap;
     stats_snapshot(&g_stats, &snap, now_ms());
-    printf("final stats -- submitted %ld | completed %ld | failed %ld | "
-           "avg latency %.1fms | uptime %.1fs\n",
+    loom_log("[INFO]", "final stats -- submitted %ld | completed %ld | failed %ld | avg latency %.1fms | uptime %.1fs",
            snap.submitted, snap.completed, snap.failed,
            snap.avg_latency_ms, snap.uptime_ms / 1000.0);
 
     pool_destroy(&g_pool);
     queue_destroy(&g_queue);
-    printf("loom stopped cleanly\n");
+    loom_log("[INFO]", "loom stopped cleanly");
 }
 
 /* Runs on a dedicated thread that has SIGINT/SIGTERM unblocked nowhere else.
@@ -103,11 +102,11 @@ int main(int argc, char **argv) {
         }
     }
     if (workers < 1 || workers > LOOM_MAX_WORKERS) {
-        fprintf(stderr, "workers must be between 1 and %d\n", LOOM_MAX_WORKERS);
+        loom_log("[ERROR]", "workers must be between 1 and %d", LOOM_MAX_WORKERS);
         return 1;
     }
     if (qcap < 1) {
-        fprintf(stderr, "queue-size must be at least 1\n");
+        loom_log("[ERROR]", "queue-size must be at least 1");
         return 1;
     }
 
@@ -126,11 +125,11 @@ int main(int argc, char **argv) {
     history_init(&g_history);
 
     if (queue_init(&g_queue, qcap) != 0) {
-        fprintf(stderr, "failed to allocate task queue\n");
+        loom_log("[ERROR]", "failed to allocate task queue");
         return 1;
     }
     if (pool_init(&g_pool, workers, &g_queue, &g_stats, &g_history, LOOM_LOG_PATH) != 0) {
-        fprintf(stderr, "failed to start worker pool (could not open %s?)\n", LOOM_LOG_PATH);
+        loom_log("[ERROR]", "failed to start worker pool (could not open %s?)", LOOM_LOG_PATH);
         return 1;
     }
 
@@ -142,7 +141,7 @@ int main(int argc, char **argv) {
     g_http.next_task_id = &g_next_id;
     g_http.id_lock = &g_id_lock;
     if (http_server_start(&g_http) != 0) {
-        fprintf(stderr, "failed to start web server on port %d (already in use?)\n", port);
+        loom_log("[ERROR]", "failed to start web server on port %d (already in use?)", port);
         return 1;
     }
 

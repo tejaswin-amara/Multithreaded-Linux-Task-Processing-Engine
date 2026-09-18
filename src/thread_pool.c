@@ -188,7 +188,7 @@ int pool_resize(thread_pool_t *pool, int new_size) {
         }
     } else if (new_size < current) {
         for (int i = 0; i < current - new_size; i++) {
-            task_t *poison = calloc(1, sizeof(task_t));
+            task_t *poison = safe_calloc(1, sizeof(task_t));
             poison->type = TASK_POISON;
             queue_push(pool->queue, poison);
         }
