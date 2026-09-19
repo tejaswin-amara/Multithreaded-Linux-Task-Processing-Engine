@@ -1,0 +1,9 @@
+.git
+bin/
+obj/
+tests/
+docs/
+*.log
+.valgrind.log
+*.tar.gz
+*.sha256
