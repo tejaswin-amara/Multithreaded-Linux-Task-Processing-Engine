@@ -1,0 +1,46 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build_and_test:
+    strategy:
+      matrix:
+        os: [ubuntu-22.04, ubuntu-24.04]
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y build-essential valgrind curl
+
+    - name: Compiler Gate
+      run: make clean && make all
+
+    - name: Memory Safety Gate
+      run: make asan && make test
+
+    - name: Thread Safety Gate
+      run: make tsan && make test
+
+    - name: Leak Audit Gate
+      run: make valgrind
+
+    - name: Stress Verification Gate
+      run: ./tests/stress_test.sh
+
+    - name: Packaging Check
+      run: |
+        make dist
+        ls -la task_engine-v1.0.0-linux-amd64.tar.gz
+        ls -la task_engine-v1.0.0-linux-amd64.tar.gz.sha256
+        sha256sum -c task_engine-v1.0.0-linux-amd64.tar.gz.sha256

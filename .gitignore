@@ -1,7 +1,7 @@
-build/
-loom
-loom.log
-*.out
-*.tmp
+bin/
+obj/
+*.o
 *.tar.gz
 *.sha256
+*.log
+.valgrind.log
