@@ -1,0 +1,22 @@
+[Unit]
+Description=Multithreaded Linux Task Processing Engine
+After=network.target
+
+[Service]
+Type=simple
+User=taskengine
+Group=taskengine
+ExecStart=/usr/local/bin/task_engine --port 8080 --threads 4 --queue-size 1024
+WorkingDirectory=/opt/task_engine
+KillSignal=SIGTERM
+
+# Sandboxing
+ProtectSystem=strict
+ProtectHome=yes
+NoNewPrivileges=true
+
+# Resource Limits
+LimitNOFILE=65536
+
+[Install]
+WantedBy=multi-user.target

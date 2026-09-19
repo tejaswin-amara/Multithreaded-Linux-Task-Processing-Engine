@@ -44,3 +44,9 @@ int      queue_size(task_queue_t *q);
 int      queue_capacity(task_queue_t *q);
 
 #endif /* LOOM_TASK_QUEUE_H */
+
+/* Non-blocking push; returns 0 on success, -1 if the queue is full or shut down. */
+int      queue_try_push(task_queue_t *q, task_t *t);
+
+/* Timed wait push; returns 0 on success, -1 if the timeout expires or the queue is shut down. */
+int      queue_push_timeout(task_queue_t *q, task_t *t, long timeout_ms);

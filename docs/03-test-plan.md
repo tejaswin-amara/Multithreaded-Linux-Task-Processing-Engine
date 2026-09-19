@@ -2,7 +2,11 @@
 
 ## 1. Approach
 
-Four layers, in order:
+Five layers, in order:
+
+0. **Unit Tests** -- `make test` executes tests in `tests/test_suite.c` covering boundary enforcement, history rollover, and high contention scenarios.
+
+1. **Functional smoke test**
 
 1. **Functional smoke test** -- build, start the server, drive it from both
    the CLI and `curl`, confirm expected output.
@@ -16,7 +20,7 @@ Four layers, in order:
    the form, confirm the worker grid, queue bar, stats, and table all
    update live.
 
-Layers 1-3 are scripted and reproducible; commands are given per test case
+Layers 0-3 are scripted and reproducible; commands are given per test case
 below so they can be re-run after any change.
 
 ## 2. Functional test cases
@@ -43,7 +47,7 @@ used to find the bug in section 4:
 ( sleep 0.4; echo "batch 10"; sleep 0.2; echo "workers 8"; sleep 0.2
   echo "batch 10"; sleep 0.2; echo "workers 3"; sleep 1.5
   echo "status"; sleep 0.3; echo "quit"
-) | timeout 30 ./loom -w 4 -p 8081 > run.out 2>&1 &
+) | timeout 30 bin/task_engine -w 4 -p 8081 > run.out 2>&1 &
 LOOM_PID=$!
 sleep 0.3
 for i in $(seq 1 15); do
@@ -123,10 +127,18 @@ good example of the kind of bug locks alone do not prevent: every access to
 the bug was about **which thread was allowed to touch the pointer at all**,
 not about a missing lock.
 
-## 5. Reproducing this test plan
+## 5. Additional Validations
 
 ```bash
-make && ./loom -w 3 -p 8080     # functional tests (section 2): drive
+make asan && make test # Run unit tests with AddressSanitizer
+make tsan && make test # Run unit tests with ThreadSanitizer
+make valgrind # Run unit tests with Valgrind leak checking
+```
+
+## 6. Reproducing this test plan
+
+```bash
+make && bin/task_engine -w 3 -p 8080     # functional tests (section 2): drive
                                  # manually via curl / the CLI
 
 ./tests/stress_test.sh          # concurrency stress test (section 3)

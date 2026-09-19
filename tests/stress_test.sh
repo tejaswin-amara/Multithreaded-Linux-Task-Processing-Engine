@@ -35,7 +35,7 @@ fi
   echo "status"
   sleep 0.3
   echo "quit"
-) | timeout 30 ./loom -w 4 -p "$PORT" > "$LOGFILE" 2>&1 &
+) | timeout 30 bin/task_engine -w 4 -p "$PORT" > "$LOGFILE" 2>&1 &
 LOOM_PID=$!
 
 sleep 0.3

@@ -3,3 +3,5 @@ loom
 loom.log
 *.out
 *.tmp
+*.tar.gz
+*.sha256

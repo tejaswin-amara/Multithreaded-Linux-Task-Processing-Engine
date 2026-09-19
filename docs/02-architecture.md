@@ -8,6 +8,22 @@ independently-locked shared resources record what happened, and two more
 HTTP endpoints read them back out for the dashboard.
 
 ```mermaid
+flowchart TD
+    subgraph HTTP Daemon Request Lifecycle
+        Req[HTTP Request] --> Accept[Accept Connection]
+        Accept --> Dispatch[Spawn/Reuse Thread]
+        Dispatch --> Parse[Parse Request]
+        Parse --> Route{Route}
+        Route -->|GET /api/stats| StatReq[Read Stats]
+        Route -->|GET /api/history| HistReq[Read History]
+        Route -->|POST /api/tasks| PushTask[Queue Task]
+        StatReq --> Resp[Send Response]
+        HistReq --> Resp
+        PushTask --> Resp
+    end
+```
+
+```mermaid
 flowchart LR
     CLI["Interactive CLI\n(main thread)"] -->|queue_push| Q[("Task Queue\nmutex + 2 condvars")]
     SUBMIT["POST /api/submit\n(handler thread)"] -->|queue_push| Q
@@ -139,6 +155,22 @@ project's clearest illustration of *why* ownership discipline around
 shared pointers matters as much as the locks themselves.
 
 ## 4. Sequence: submit → process → dashboard
+
+```mermaid
+flowchart TD
+    subgraph HTTP Daemon Request Lifecycle
+        Req[HTTP Request] --> Accept[Accept Connection]
+        Accept --> Dispatch[Spawn/Reuse Thread]
+        Dispatch --> Parse[Parse Request]
+        Parse --> Route{Route}
+        Route -->|GET /api/stats| StatReq[Read Stats]
+        Route -->|GET /api/history| HistReq[Read History]
+        Route -->|POST /api/tasks| PushTask[Queue Task]
+        StatReq --> Resp[Send Response]
+        HistReq --> Resp
+        PushTask --> Resp
+    end
+```
 
 ```mermaid
 sequenceDiagram

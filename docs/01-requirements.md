@@ -34,7 +34,7 @@ worker pool can be resized while running.
 | Category | Requirement |
 |---|---|
 | Concurrency correctness | No data races or use-after-free under concurrent multi-producer, multi-consumer load, verified with ThreadSanitizer. |
-| Portability | Builds and runs on any mainstream Linux distribution with glibc; no non-POSIX dependencies. |
+| Portability | Standard Ubuntu Linux strictly verified for Ubuntu 22.04 LTS and Ubuntu 24.04 LTS environments; no non-POSIX dependencies. |
 | Dependency footprint | No third-party libraries -- only the C standard library, POSIX threads, and POSIX sockets. |
 | Responsiveness | The dashboard reflects worker and queue state within one polling interval (1 second). |
 | Resource bounds | Queue capacity and worker count are both configurable and capped, so load cannot grow memory or thread count without bound. |
@@ -43,7 +43,7 @@ worker pool can be resized while running.
 ## 5. Assumptions and constraints
 
 - Single machine, single process -- not a distributed system.
-- Linux target: relies on POSIX sockets, `pthread`, and `sigwait`.
+- Ubuntu Linux target: relies on POSIX sockets, `pthread`, `sigwait`, and `CLOCK_MONOTONIC`.
 - The HTTP server has no authentication or TLS; it is meant for
   localhost or a trusted local network, not the open internet.
 - State (queue, stats, history) lives in memory only and resets on restart.

@@ -1,3 +1,4 @@
+#include <stdlib.h>
 #ifndef LOOM_COMMON_H
 #define LOOM_COMMON_H
 
@@ -42,3 +43,6 @@ const char *task_type_name(task_type_t t);
 const char *task_status_name(task_status_t s);
 
 #endif /* LOOM_COMMON_H */
+void *safe_malloc(size_t size);
+void *safe_calloc(size_t nmemb, size_t size);
+void loom_log(const char *level, const char *fmt, ...);

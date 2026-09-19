@@ -44,7 +44,7 @@ static void send_file(int fd, const char *path) {
     fseek(f, 0, SEEK_END);
     long sz = ftell(f);
     fseek(f, 0, SEEK_SET);
-    char *buf = malloc((size_t)sz > 0 ? (size_t)sz : 1);
+    char *buf = safe_malloc((size_t)sz > 0 ? (size_t)sz : 1);
     size_t got = buf ? fread(buf, 1, (size_t)sz, f) : 0;
     fclose(f);
     if (!buf) {
@@ -90,7 +90,7 @@ static void handle_tasks(http_server_t *srv, int fd) {
     int n = history_snapshot(srv->history, entries, LOOM_HISTORY_CAP);
 
     size_t cap = 8192;
-    char *body = malloc(cap);
+    char *body = safe_malloc(cap);
     int off = snprintf(body, cap, "[");
     for (int i = 0; i < n; i++) {
         off += snprintf(body + off, cap - (size_t)off,
@@ -139,7 +139,7 @@ static void handle_submit(http_server_t *srv, int fd, const char *body_json) {
     }
     if (param <= 0) param = 1;
 
-    task_t *t = calloc(1, sizeof(task_t));
+    task_t *t = safe_calloc(1, sizeof(task_t));
     t->id = next_task_id(srv);
     t->type = type;
     t->param = param;
@@ -203,7 +203,7 @@ static void *acceptor_main(void *arg) {
         int cfd = accept(srv->listen_fd, (struct sockaddr *)&client_addr, &len);
         if (cfd < 0) break;   /* listen_fd was closed by http_server_stop() */
 
-        conn_ctx_t *ctx = malloc(sizeof(conn_ctx_t));
+        conn_ctx_t *ctx = safe_malloc(sizeof(conn_ctx_t));
         ctx->srv = srv;
         ctx->client_fd = cfd;
         pthread_t tid;

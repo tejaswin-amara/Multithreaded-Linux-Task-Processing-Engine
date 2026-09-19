@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include <string.h>
 #include "history.h"
 
@@ -16,7 +17,7 @@ void history_add(history_t *h, const task_t *t, double latency_ms) {
     e->status = t->status;
     e->param = t->param;
     e->latency_ms = latency_ms;
-    strncpy(e->result, t->result, sizeof(e->result) - 1);
+    snprintf(e->result, sizeof(e->result), "%s", t->result);
     e->result[sizeof(e->result) - 1] = '\0';
     h->head = (h->head + 1) % LOOM_HISTORY_CAP;
     if (h->count < LOOM_HISTORY_CAP) h->count++;
