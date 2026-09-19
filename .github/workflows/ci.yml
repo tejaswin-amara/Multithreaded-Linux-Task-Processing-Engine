@@ -33,7 +33,7 @@ jobs:
       run: make tsan && make test
 
     - name: Leak Audit Gate
-      run: make valgrind
+      run: make clean && make all && make valgrind
 
     - name: Stress Verification Gate
       run: ./tests/stress_test.sh
